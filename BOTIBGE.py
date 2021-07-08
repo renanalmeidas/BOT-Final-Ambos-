@@ -186,16 +186,16 @@ async def process_info(message: types.Message, state: FSMContext):
                     txt += ('<b>Identifiquei.</>\n')
                     if data['info'] == "Gênero":
                         if teste['genero']:
-                            txt += f'\n<b>Gênero:</b> <i>\n{teste["genero"]}</i>\n'
+                            txt += f'\n<b>Gênero:</b> <i>{teste["genero"]}</i>\n'
                     if data['info'] == "Frequência Feminina":
                         if teste['frequnciaF']:
-                            txt += f'\n<b>Frequência Feminina:</b> <i>\n{teste["frequnciaF"]}</i>\n'
+                            txt += f'\n<b>Frequência Feminina:</b> <i>{teste["frequnciaF"]}</i>\n'
                     if data['info'] == "Frequência Masculina":
                         if teste['frequnciaM']:
-                            txt += f'\n<b>Frequência Masculina:</b> <i>\n{teste["frequnciaM"]}</i>\n'
+                            txt += f'\n<b>Frequência Masculina:</b> <i>{teste["frequnciaM"]}</i>\n'
                     if data['info'] == "Frequência Total":
                         if teste['frequnciaT']:
-                            txt += f'\n<b>Frequência Total:</b> <i>\n{teste["frequnciaT"]}</i>\n'
+                            txt += f'\n<b>Frequência Total:</b> <i>{teste["frequnciaT"]}</i>\n'
 
             if txt != '':
                 await types.ChatActions.typing(0.3)

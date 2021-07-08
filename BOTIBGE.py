@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.DEBUG)
 API_TOKEN = '1721365780:AAENomaexo7U86BNtJT11BS28bzj0YFpU-w'
 
 
-bot = Bot(token=API_TOKEN) # , proxy='http://proxy.server:3128'
+bot = Bot(token=API_TOKEN, proxy='http://proxy.server:3128') # , proxy='http://proxy.server:3128'
 
 # For example use simple MemoryStorage for Dispatcher.
 storage = MemoryStorage()
@@ -32,7 +32,7 @@ class Form(StatesGroup):
 @dp.message_handler(commands=['info'])
 async def send_welcome(message: types.Message):
     await types.ChatActions.typing(0.5)
-    await message.reply("Hi! I'm Bot IBGE!\nPowered by:\nDev. Renan Almeida. (Estagiário Developer)\n")
+    await message.reply("Olá! Eu sou o Bot IBGE!\nDesenvolvido por:\nDev. Renan Almeida. (Estagiário Developer)\n")
 
 
 @dp.message_handler(commands='start')
@@ -72,7 +72,7 @@ async def echo(message: types.Message, state: FSMContext):
     await types.ChatActions.typing(0.3)
     entradas = ['oi', 'olá', 'ola', 'oie', 'hey', 'eai', 'eae', 'hello', 'ei', 'hi', 'oii', 'oiee', 'ou']
     if message.text.lower() in (entradas):
-        await message.answer('Olá ' + message['chat']['first_name'] + ', sou o Bot IBGE. Criado para encontrar as informações do seu nome ou de outra pessoa (nomes masculinos).\n'
+        await message.answer('Olá ' + message['chat']['first_name'] + ', sou o Bot IBGE. Criado para encontrar as informações do seu nome ou de outra pessoa.\n'
                         'Você deve me fornecer um valor para pesquisa.')
     if message.text != '':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
@@ -107,7 +107,7 @@ async def process_name(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['apresentacao'] = message.text.lower()
     if data['apresentacao'] == 'não' or data['apresentacao'] == 'nao':
-        await message.reply('Quando quiser, estou a dispósição!')
+        await message.reply('Quando quiser, estou a dispósição!', reply_markup=types.ReplyKeyboardRemove())
         await state.finish()
     elif data['apresentacao'] == 'sim' or data['apresentacao'] == 's':
         await Form.next()

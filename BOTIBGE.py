@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.DEBUG)
 API_TOKEN = '1721365780:AAENomaexo7U86BNtJT11BS28bzj0YFpU-w'
 
 
-bot = Bot(token=API_TOKEN)
+bot = Bot(token=API_TOKEN) # , proxy='http://proxy.server:3128'
 
 # For example use simple MemoryStorage for Dispatcher.
 storage = MemoryStorage()
@@ -31,11 +31,13 @@ class Form(StatesGroup):
 
 @dp.message_handler(commands=['info'])
 async def send_welcome(message: types.Message):
+    await types.ChatActions.typing(0.5)
     await message.reply("Hi! I'm Bot IBGE!\nPowered by:\nDev. Renan Almeida. (Estagiário Developer)\n")
 
 
 @dp.message_handler(commands='start')
 async def cmd_start(message: types.Message):
+    await types.ChatActions.typing(0.3)
     with open('user.txt') as file:
         userList = file.read()
     user = userList.split('\n')
@@ -51,9 +53,9 @@ async def cmd_start(message: types.Message):
             markup.add("Não")
             await message.reply("Antes de começar, siga as regras para encontrar o nome:\n"
                                 "1 - O nome não deve conter números.\n"
-                                "2 - Escreva um nome aprovado pelo IBGE.\n"
-                                "3 - O no  e não deve conter pontos ou traços.\n"
-                                "Podemos começar?", reply_markup=markup)
+                                "2 - Escreva somente o primeiro nome.\n"
+                                "3 - O nome não deve conter pontos, acentos ou traços.\n"
+                                "Você concorda com as regras acima?", reply_markup=markup)
         else:
             await message.answer(
                 "Olá, eu sou o Bot IBGE, criado para encontrar as informações do seu nome ou de outra pessoa.\n"
@@ -67,6 +69,7 @@ async def cmd_start(message: types.Message):
 
 @dp.message_handler()
 async def echo(message: types.Message, state: FSMContext):
+    await types.ChatActions.typing(0.3)
     entradas = ['oi', 'olá', 'ola', 'oie', 'hey', 'eai', 'eae', 'hello', 'ei', 'hi', 'oii', 'oiee', 'ou']
     if message.text.lower() in (entradas):
         await message.answer('Olá ' + message['chat']['first_name'] + ', sou o Bot IBGE. Criado para encontrar as informações do seu nome ou de outra pessoa (nomes masculinos).\n'
@@ -74,7 +77,7 @@ async def echo(message: types.Message, state: FSMContext):
     if message.text != '':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
         markup.add("/start")
-        await message.reply("Vamos começar?", reply_markup=markup)
+        await message.reply("Para iniciar minhas configurações você deve pressionar o botão '/start'.", reply_markup=markup)
 
 
 # You can use state '*' if you need to handle all states
@@ -97,6 +100,7 @@ async def cancel_handler(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state=Form.apresentação)
 async def process_name(message: types.Message, state: FSMContext):
+    await types.ChatActions.typing(0.3)
     """
     Process user name
     """
@@ -123,16 +127,16 @@ async def process_age(message: types.Message, state: FSMContext):
     # Update state and data
     await Form.next()
     await state.update_data(nome=(message.text.upper()))
-
     # Configure ReplyKeyboardMarkup
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
     markup.add("Frequência Masculina", "Frequência Feminina")
     markup.add("Gênero", "Frequência Total")
-
+    markup.add("Explique os conceitos")
     await message.reply("Qual informação você deseja?", reply_markup=markup)
 
 
-@dp.message_handler(lambda message: message.text not in ["Frequência Masculina", "Frequência Feminina", "Gênero", "Frequência Total"], state=Form.info)
+
+@dp.message_handler(lambda message: message.text not in ["Frequência Masculina", "Frequência Feminina", "Gênero", "Frequência Total","Explique os conceitos"], state=Form.info)
 async def process_info_invalid(message: types.Message):
     """
     In this example gender has to be one of: Male, Female, Other.
@@ -161,12 +165,25 @@ async def process_info(message: types.Message, state: FSMContext):
                 arquivo.write('\n' + message["chat"]["username"] + '\n\n')
         else:
             await message.answer("Você não possui um Username. Logo, deverá ir em suas configurações e nomea-lo.")
-        if textomsg in user:
+
+        if data['info'] == "Explique os conceitos":
+            await types.ChatActions.typing(0.2)
+            await message.answer('Gênero: Fornecerei o gênero que o IBGE reconhece o nome.')
+            await types.ChatActions.typing(0.2)
+            await message.answer('Frequência Masculina: Fornecerei o número de homens que possuem o nome pesquisado.')
+            await types.ChatActions.typing(0.2)
+            await message.answer('Frequência Feminina: Fornecerei o número de mulheres que possuem o nome pesquisado.')
+            await types.ChatActions.typing(0.2)
+            await message.answer('Frequência Total: Fornecerei o número total de pessoas que possuem o nome pesquisado.')
+            await types.ChatActions.typing(2)
+            await message.answer(f'<i><b>Clique na opção desejada.</b> </i>', parse_mode=types.ParseMode.HTML)
+            return
+        elif textomsg in user:
             txt = ''
             full
             for teste in full:
                 if data['nome'] in teste['nome']:
-                    txt += ('<b>Identificado.</>\n')
+                    txt += ('<b>Identifiquei.</>\n')
                     if data['info'] == "Gênero":
                         if teste['genero']:
                             txt += f'\n<b>Gênero:</b> <i>\n{teste["genero"]}</i>\n'
@@ -181,6 +198,7 @@ async def process_info(message: types.Message, state: FSMContext):
                             txt += f'\n<b>Frequência Total:</b> <i>\n{teste["frequnciaT"]}</i>\n'
 
             if txt != '':
+                await types.ChatActions.typing(0.3)
                 await message.answer(txt, parse_mode=types.ParseMode.HTML)
             elif message.text.isdigit() == False:
                 await message.answer('Nome não encontrado na base de dados.')
@@ -188,16 +206,18 @@ async def process_info(message: types.Message, state: FSMContext):
         markup = types.ReplyKeyboardRemove()
 
         # And send message
-        await bot.send_message(
-            message.chat.id,
-            md.text(
-                md.text('Nome: ', md.bold(data['nome'])),
-                md.text('Informação pesquisada: ', data['info']),
-                sep='\n',
-            ),
-            reply_markup=markup,
-            parse_mode=ParseMode.MARKDOWN,
-        )
+        if data['info'] != 'Explique os conceitos':
+            await types.ChatActions.typing(0.3)
+            await bot.send_message(
+                message.chat.id,
+                md.text(
+                    md.text('Nome: ', md.bold(data['nome'])),
+                    md.text('Informação pesquisada: ', data['info']),
+                    sep='\n',
+                ),
+                reply_markup=markup,
+                parse_mode=ParseMode.MARKDOWN,
+            )
 
     # Finish conversation
     await state.finish()

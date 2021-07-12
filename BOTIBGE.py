@@ -12,7 +12,7 @@ from aiogram.utils import executor
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
-API_TOKEN = '1721365780:AAENomaexo7U86BNtJT11BS28bzj0YFpU-w'  # chave do bot
+API_TOKEN = 'API'  # chave do bot
 
 # Initialize bot and dispatcher
 # bot = Bot(token=API_TOKEN, proxy="http://proxy.server:3128")      # pythonanywhere

@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.DEBUG)
 API_TOKEN = '1721365780:AAENomaexo7U86BNtJT11BS28bzj0YFpU-w'
 
 
-bot = Bot(token=API_TOKEN, proxy='http://proxy.server:3128') # , proxy='http://proxy.server:3128'
+bot = Bot(token=API_TOKEN) # , proxy='http://proxy.server:3128'
 
 # For example use simple MemoryStorage for Dispatcher.
 storage = MemoryStorage()
@@ -32,7 +32,7 @@ class Form(StatesGroup):
 @dp.message_handler(commands=['info'])
 async def send_welcome(message: types.Message):
     await types.ChatActions.typing(0.5)
-    await message.reply("Olá! Eu sou o Bot IBGE!\nDesenvolvido por:\nDev. Renan Almeida. (Estagiário Developer)\n")
+    await message.reply("Hi! I'm Bot IBGE!\nPowered by:\nDev. Renan Almeida. (Estagiário Developer)\n")
 
 
 @dp.message_handler(commands='start')
@@ -72,7 +72,7 @@ async def echo(message: types.Message, state: FSMContext):
     await types.ChatActions.typing(0.3)
     entradas = ['oi', 'olá', 'ola', 'oie', 'hey', 'eai', 'eae', 'hello', 'ei', 'hi', 'oii', 'oiee', 'ou']
     if message.text.lower() in (entradas):
-        await message.answer('Olá ' + message['chat']['first_name'] + ', sou o Bot IBGE. Criado para encontrar as informações do seu nome ou de outra pessoa.\n'
+        await message.answer('Olá ' + message['chat']['first_name'] + ', sou o Bot IBGE. Criado para encontrar as informações do seu nome ou de outra pessoa (nomes masculinos).\n'
                         'Você deve me fornecer um valor para pesquisa.')
     if message.text != '':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
@@ -186,16 +186,16 @@ async def process_info(message: types.Message, state: FSMContext):
                     txt += ('<b>Identifiquei.</>\n')
                     if data['info'] == "Gênero":
                         if teste['genero']:
-                            txt += f'\n<b>Gênero:</b> <i>{teste["genero"]}</i>\n'
+                            txt += f'\n<b>Gênero:</b> <i>\n{teste["genero"]}</i>\n'
                     if data['info'] == "Frequência Feminina":
                         if teste['frequnciaF']:
-                            txt += f'\n<b>Frequência Feminina:</b> <i>{teste["frequnciaF"]}</i>\n'
+                            txt += f'\n<b>Frequência Feminina:</b> <i>\n{teste["frequnciaF"]}</i>\n'
                     if data['info'] == "Frequência Masculina":
                         if teste['frequnciaM']:
-                            txt += f'\n<b>Frequência Masculina:</b> <i>{teste["frequnciaM"]}</i>\n'
+                            txt += f'\n<b>Frequência Masculina:</b> <i>\n{teste["frequnciaM"]}</i>\n'
                     if data['info'] == "Frequência Total":
                         if teste['frequnciaT']:
-                            txt += f'\n<b>Frequência Total:</b> <i>{teste["frequnciaT"]}</i>\n'
+                            txt += f'\n<b>Frequência Total:</b> <i>\n{teste["frequnciaT"]}</i>\n'
 
             if txt != '':
                 await types.ChatActions.typing(0.3)

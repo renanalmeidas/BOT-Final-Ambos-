@@ -257,6 +257,7 @@ async def process_continua_invalid(message: types.Message):
 @dp.message_handler(state=Form.continua)
 async def process_continua(message: types.Message, state: FSMContext):
     await types.ChatActions.typing(0.1)     # ação de 'digitando'
+    markup = types.ReplyKeyboardRemove()
 
     async with state.proxy() as data:
         data['continua'] = message.text
@@ -295,11 +296,7 @@ async def echo(message: types.Message):
     if message.text != '':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
         markup.add("/start")
-        await message.reply("Clique no botão '/start' para iniciar.",
-                            reply_markup=markup, parse_mode=types.ParseMode.HTML)
-
-
-await state.finish()
+        await message.reply("Clique no botão '/start' para iniciar.",reply_markup=markup, parse_mode=types.ParseMode.HTML)
 
 # final
 if __name__ == '__main__':

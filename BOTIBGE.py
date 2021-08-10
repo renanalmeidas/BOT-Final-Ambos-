@@ -12,7 +12,8 @@ from aiogram.utils import executor
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
-API_TOKEN = 'API'  # chave do bot
+API_TOKEN = 'API'  # Aqui deve ser inserido a chave do bot que irá configurar.
+
 
 # Initialize bot and dispatcher
 # bot = Bot(token=API_TOKEN, proxy="http://proxy.server:3128")      # pythonanywhere
